@@ -22,14 +22,22 @@ class _OnBoardViewState extends State<OnBoardView> {
   bool get _isFirstPage => _selectedIndex == 0;
 
   // ---xxx
-//a
+  ValueNotifier<bool> isBackEnable = ValueNotifier(false);
   // ---xxx
 
   void _incrementAndChange([int? value]) {
     if (_isLastPage && value == null) {
+      _changeBackEnable(true);
       return;
     }
+    _changeBackEnable(false);
     _incrementSelectedPage(value);
+  }
+
+  void _changeBackEnable(bool value) {
+    if (value == isBackEnable.value) return;
+
+    isBackEnable.value = value;
   }
 
   void _incrementSelectedPage([int? value]) {
@@ -76,7 +84,13 @@ class _OnBoardViewState extends State<OnBoardView> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
-      actions: [TextButton(onPressed: () {}, child: Text(_skipTile))],
+      actions: [
+        ValueListenableBuilder<bool>(
+            valueListenable: isBackEnable,
+            builder: (BuildContext context, bool value, Widget? child) {
+              return value ? const SizedBox() : TextButton(onPressed: () {}, child: Text(_skipTile));
+            })
+      ],
       leading: _isFirstPage
           ? null
           : IconButton(onPressed: () {}, color: ColorUtilities().greyColor, icon: const Icon(Icons.chevron_left_outlined)),
