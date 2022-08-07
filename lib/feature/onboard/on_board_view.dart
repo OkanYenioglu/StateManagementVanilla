@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kartal/kartal.dart';
+import 'package:provider/provider.dart';
+import 'package:state_managements_real_life/feature/login/view/login_view.dart';
 import 'package:state_managements_real_life/feature/onboard/onboard_model.dart';
 import 'package:state_managements_real_life/feature/onboard/tab_indicator.dart';
+import 'package:state_managements_real_life/product/model/state/project_context.dart';
+import 'package:state_managements_real_life/product/model/state/user_context.dart';
 import 'package:state_managements_real_life/product/padding/page_padding.dart';
 import 'package:state_managements_real_life/product/widget/onboard_card.dart';
 
@@ -53,7 +58,7 @@ class _OnBoardViewState extends State<OnBoardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
+      appBar: _appBar(context),
       body: Padding(
         padding: const PagePadding.all(),
         child: Column(
@@ -79,8 +84,9 @@ class _OnBoardViewState extends State<OnBoardView> {
     );
   }
 
-  AppBar _appBar() {
+  AppBar _appBar(BuildContext context) {
     return AppBar(
+      title: Text(context.watch<ProductContext>().newUserName),
       backgroundColor: Colors.transparent,
       elevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
@@ -88,7 +94,14 @@ class _OnBoardViewState extends State<OnBoardView> {
         ValueListenableBuilder<bool>(
             valueListenable: isBackEnable,
             builder: (BuildContext context, bool value, Widget? child) {
-              return value ? const SizedBox() : TextButton(onPressed: () {}, child: Text(_skipTile));
+              return value
+                  ? const SizedBox()
+                  : TextButton(
+                      onPressed: () {
+                        context.read<ProductContext>().changeName('Okan');
+                        context.navigateToPage(LoginView());
+                      },
+                      child: Text(_skipTile));
             })
       ],
       leading: _isFirstPage
